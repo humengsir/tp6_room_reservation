@@ -21,7 +21,7 @@
                         <div id="myTabContent" class="tab-content">
                             <div class="tab-pane active in" id="home">
                                 <script src="/assets/js/My97DatePicker/WdatePicker.js"></script>
-                                <form id="tab" method="post" action="">
+                                <form id="tab" method="post" action="" data-href="/room/add" data-redirect="/room">
                                     <label>会议室名称</label>
                                     <input type="text" name="room_name" value="" class="input-xlarge" autofocus="true" />
                                     <label>锁定开始时间</label>
@@ -42,18 +42,4 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        $(function(){
-                            $("#sub_btn").click(function(){
-                                var data = $('form').serializeArray();
-                                $.post("/room/add", data, function(res){
-                                    if (res.error_msg != '') {
-                                        alert(res.error_msg);
-                                    }else{
-                                        window.location.href = '/room';
-                                    }
-                                }, 'json');
-                            });
-                        });
-                    </script>
 {include file="Public/footer"}
