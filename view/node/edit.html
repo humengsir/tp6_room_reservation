@@ -1,0 +1,63 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">编辑权限</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li><a href="/node"> 权限列表 </a> <span class="divider">/</span></li>
+                <li class="active">编辑权限</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="bb-alert alert alert-info" style="display: none;">
+                        <span>操作提示</span>
+                    </div>
+                    <div class="well">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">请填写权限资料</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <form id="tab" method="post" action="">
+                                    <label>名称</label>
+                                    <input type="hidden" name="id" value="{$info.id}">
+                                    <input type="text" name="node_name" value="{$info.node_name}" class="input-xlarge" required="true" autofocus="true" />
+                                    <label>路径</label>
+                                    <input type="text" name="node_url" value="{$info.node_url}" class="input-xlarge" required="true" />
+                                    <label>模块排序数字(数字越大越靠前)</label>
+                                    <input type="text" name="node_sort" value="{$info.node_sort}" class="input-xlarge" />
+                                    <label>类别</label>
+                                    <select name="node_type" class="input-xlarge" id="DropDownTimezone">
+                                        {volist name=":get_node_type()" id="vo"}
+                                        <option value="{$key}" {if condition="$info.node_type eq $key"}selected="selected"{/if} class="input-xlarge option">{$vo}</option>
+                                        {/volist}
+                                    </select>
+                                    <label>状态</label>
+                                    <select name="status" class="input-xlarge">
+                                        <option value="1" {if condition="1 eq $info.status"}selected="selected"{/if} class="input-xlarge option">启用</option>
+                                        <option value="0" {if condition="0 eq $info.status"}selected="selected"{/if} class="input-xlarge option">禁用</option>
+                                    </select>
+                                    <div class="btn-toolbar">
+                                        <button type="button" id="sub_btn" class="btn btn-primary"><strong>提交</strong></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(function(){
+                            $("#sub_btn").click(function(){
+                                var data = $('form').serializeArray();
+                                $.post("/node/edit", data, function(res){
+                                    if (res.error_msg != '') {
+                                        alert(res.error_msg);
+                                    }else{
+                                        window.location.href = '/node';
+                                    }
+                                }, 'json');
+                            });
+                        });
+                    </script>
+{include file="Public/footer"}

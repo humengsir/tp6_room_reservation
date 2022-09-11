@@ -1,0 +1,90 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">权限分配</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li class="active">权限分配</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="bb-alert alert alert-info" style="display: none;">
+                        <span>操作提示</span>
+                    </div>
+                    <select id="group_id" style="margin:5px 0px 0px">
+                        {volist name="all_group" id="vo"}
+                        <option value="{$key}" {if condition="$group_id eq $key"}selected="selected"{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                    <style>
+                        .node-label{
+                            display:inline-block;font-size:12px;width:100px;cursor: pointer;
+                        }
+                        .node-label>input{
+                            margin-bottom: 6px;
+                        }
+                    </style>
+                    <form method="post" action="">
+                        <input type="hidden" name="id" value="{$group_id}">
+                        {volist name="all_node" id="vo"}
+                        <div class="block">
+                            <a href="#page-stats_{$key}" class="block-heading" data-toggle="collapse">{$key|format_node_type}</a>
+                            <div id="page-stats_{$key}" class="block-body collapse in">
+                                <p style="margin-top: 6px;">
+                                    <label class="btn btn-small check-all">全选</label>
+                                    <label class="btn btn-small uncheck-all">全不选</label>
+                                    <label class="btn btn-small check-dis">反选</label>
+                                </p>
+                                {volist name="vo" id="item"}
+                                <label class="node-label">
+                                    <input type="checkbox" {if condition="in_array($item.id, $my_node)"}checked="checked"{/if} name="node_id[]" value="{$item.id}" />{$item.node_name}
+                                </label>&nbsp;&nbsp;
+                                {/volist}
+                            </div>
+                        </div>
+                        {/volist}
+                        <div>
+                            <button id="sub_btn" type="button" class="btn btn-primary">更新</button>
+                        </div>
+                    </form>
+                    <script>
+                        $(function(){
+
+                            $("#group_id").change(function(){
+                                window.location.href = '/permission/assign?id=' + $("#group_id").val();
+
+                            });
+
+                            $(".check-all").click(function(){
+                                let ele = $(this).parent().nextAll().each(function(index, ele){
+                                    $(ele).find("input").prop("checked", true);
+                                });
+                            });
+
+                            $(".uncheck-all").click(function(){
+                                let ele = $(this).parent().nextAll().each(function(index, ele){
+                                    $(ele).find("input").prop("checked", false);
+                                });
+                            });
+
+                            $(".check-dis").click(function(){
+                                let ele = $(this).parent().nextAll().each(function(index, ele){
+                                    $(ele).find("input").prop("checked", !$(ele).find("input").prop("checked"));
+                                });
+                            });
+
+                            $("#sub_btn").click(function(){
+                                var data = $('form').serializeArray();
+                                $.post("/permission/assign", data, function(res){
+                                    if (res.error_msg != '') {
+                                        alert(res.error_msg);
+                                    }else{
+                                        window.location.href = '/group';
+                                    }
+                                }, 'json');
+                            });
+                        });
+                    </script>
+{include file="Public/footer"}

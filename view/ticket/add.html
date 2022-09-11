@@ -1,0 +1,102 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">添加工单</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li><a href="/user"> 工单列表 </a> <span class="divider">/</span></li>
+                <li class="active">添加工单</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="bb-alert alert alert-info" style="display: none;">
+                        <span>操作提示</span>
+                    </div>
+                    <div class="well">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">请添加工单资料</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <form id="tab" method="post" action="" autocomplete="off" data-href="/ticket/add" data-redirect="/ticket">
+                                    <label>标题</label>
+                                    <input type="text" name="title" value="" class="input-xlarge" />
+                                    <label>内容</label>
+                                    <textarea name="content" class="input-xlarge" rows="5"></textarea>
+                                    <label>工单类型</label>
+                                    <select name="ticket_type" class="input-xlarge">
+                                        {volist name=":get_ticket_type()" id="vo"}
+                                        <option value="{$key}" class="input-xlarge option">{$vo}</option>
+                                        {/volist}
+                                    </select>
+                                    <label>审核人列表(请搜索后选择下拉列表)</label>
+                                    <input type="text" id="search_username" class="input-small" />
+                                    <span style="margin-bottom: 10px" id="search_user_btn" class="btn btn-small"> 搜 索 </span>
+                                    <select id="search_user_select">
+                                        <option value="">请选择</option>
+                                    </select>
+                                    <span style="margin-bottom: 10px" id="add_into_leader_user_btn" class="btn btn-small">添加该用户作为审核人</span>
+                                    <br/>
+                                    <style>
+                                        #leader_user_list_div .btn{
+                                            margin-right: 3px;
+                                        }
+                                    </style>
+                                    <div id="leader_user_list_div">
+                                    </div>
+                                    <input type="hidden" name="leader_uid" value="" />
+                                    <div class="btn-toolbar">
+                                        <button type="button" id="sub_btn" class="btn btn-primary"><strong>提交</strong></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(function(){
+                            $("#search_user_btn").click(function(){
+                                var search_text = $("#search_username").val().trim();
+                                if (search_text != '') {
+                                    $.post("/api/search_user", {"name": search_text}, function(res){
+                                        if (res.error_msg != '') {
+                                            alert(res.error_msg);
+                                        } else {
+                                            $("#search_user_select").html(create_select_option(res.data));
+                                        }
+                                    }, 'json');
+                                }
+                            });
+                            $("#add_into_leader_user_btn").click(function(){
+                                var add_user = $("#search_user_select").val();
+                                if (add_user != '') {
+                                    var add_user_name = $("#search_user_select").find("option:selected").text();
+                                    $("#leader_user_list_div").append("<span title='点我移除' data-uid=" + add_user + " class='btn btn-small leader_user'>" + add_user_name + "</span>");
+                                    reset_leader_user();
+                                }
+                            });
+                            $("body").on('click', '.leader_user', function(){
+                                $(this).remove();
+                                reset_leader_user();
+                            });
+                        });
+                        function create_select_option(data)
+                        {
+                            var str = '<option value="">请选择</option>';
+                            for( var i in data) {
+                                let item = data[i];
+                                str += '<option value="' + item['id'] + '">' + item['username'] + '</option>'
+                            }
+                            return str;
+                        }
+                        function reset_leader_user()
+                        {
+                            var uids = [];
+                            $(".leader_user").each(function(index, ele){
+                                uids.push($(ele).data('uid'));
+                            });
+                            $("input[name='leader_uid']").val(uids.join(','));
+                        }
+                    </script>
+{include file="Public/footer"}

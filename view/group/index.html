@@ -1,0 +1,53 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">用户组列表</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li class="active">用户组列表</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="btn-toolbar" style="margin-bottom:2px;">
+                        <a href="/group/add" class="btn btn-primary"><i class="icon-plus"></i> 新增</a>
+                    </div>
+                    <div class="block">
+                        <a href="#page-stats" class="block-heading" data-toggle="collapse">用户组列表</a>
+                        <div id="page-stats" class="block-body collapse in">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width:20px">ID</th>
+                                        <th style="width:100px">用户组名</th>
+                                        <th style="width:80px">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {volist name="list" id="vo"}
+                                    <tr>
+                                        <td>{$key}</td>
+                                        <td>{$vo}</td>
+                                        <td>
+                                            <a href="/group/edit?id={$key}" title="修改"><i class="icon-pencil"></i></a> &nbsp; &nbsp; 
+                                            <a href="/permission/assign?id={$key}" title="分配权限"><i class="icon-screenshot"></i></a> &nbsp; &nbsp; 
+                                            <a data-toggle="modal" href="#myModal" title="删除"><i class="icon-remove" href="/group/del?id={$key}"></i></a>
+                                        </td>
+                                    </tr>
+                                    {/volist}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <script>
+                        $('.icon-remove').click(function(){
+                            var href=$(this).attr('href');
+                            bootbox.confirm('确定要这样做吗？', function(result) {
+                                if(result){
+                                    location.replace(href);
+                                }
+                            });
+                        })
+                    </script>
+{include file="Public/footer"}

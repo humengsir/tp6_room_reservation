@@ -1,0 +1,73 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">审核查看工单</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li><a href="/user"> 工单列表 </a> <span class="divider">/</span></li>
+                <li class="active">审核查看工单</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="bb-alert alert alert-info" style="display: none;">
+                        <span>操作提示</span>
+                    </div>
+                    <div class="well">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">请审核查看工单资料</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <form id="tab" method="post" action="" autocomplete="off" data-href="/ticket/add" data-redirect="/ticket">
+                                    <label>标题</label>
+                                    <input type="text" disabled="disabled" name="title" value="{$info.title}" class="input-xlarge" />
+                                    <label>内容</label>
+                                    <textarea disabled="disabled" name="content" class="input-xlarge" rows="5">{$info.content}</textarea>
+                                    <label>工单类型</label>
+                                    <select name="ticket_type" class="input-xlarge" disabled="disabled">
+                                        {volist name=":get_ticket_type()" id="vo"}
+                                        <option {if condition="$info['ticket_type'] eq $key"}selected="selected"{/if} value="{$key}" class="input-xlarge option">{$vo}</option>
+                                        {/volist}
+                                    </select>
+                                    <label>审核人列表(请搜索后选择下拉列表)</label>
+                                    <style>
+                                        #leader_user_list_div .btn{
+                                            margin-right: 3px;
+                                        }
+                                    </style>
+                                    <div id="leader_user_list_div">
+                                        {volist name="$info.leader_uid" id="vo" key="key"}
+                                        <span data-uid="{$vo}" class='btn btn-small {if condition="$key elt count($info.approve_uid)"}btn-info{/if}'>{$vo|format_user_name}</span>
+                                        {/volist}
+                                    </div>
+                                    <label>待审核人</label>
+                                    {if condition="$info.point_uid"}
+                                    <span class="btn btn-small">{$info.point_uid|format_user_name}</span>
+                                    {/if}
+                                    <div class="btn-toolbar">
+                                        {if condition="$info.status neq 3 && $info.status neq -1 && $info.point_uid eq $user_info.id"}
+                                        <button type="button" data-judge-status="1" id="approve_btn" class="btn btn-primary ticket_judge"><strong>通过</strong></button>
+                                        <button type="button" data-judge-status="0" id="reject_btn" class="btn btn-primary ticket_judge"><strong>拒绝</strong></button>
+                                        {/if}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(function(){
+                            $(".ticket_judge").click(function(){
+                                var judge_status = $(this).data('judge-status');
+                                $.post("/ticket/judge", {"id": "{$info.id}", "judge_status": judge_status}, function(res){
+                                    if (res.error_msg != '') {
+                                        alert(res.error_msg);
+                                    } else {
+                                        window.location.href = '/ticket';
+                                    }
+                                }, 'json');
+                            });
+                        });
+                    </script>
+{include file="Public/footer"}

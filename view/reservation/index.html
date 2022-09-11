@@ -1,0 +1,71 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">预约列表</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li class="active">预约列表</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="btn-toolbar" style="margin-bottom:2px;">
+                        <a href="/reservation/add" class="btn btn-primary"><i class="icon-plus"></i> 新增</a>
+                    </div>
+                    <div class="block">
+                        <a href="#page-stats" class="block-heading" data-toggle="collapse">预约列表</a>
+                        <div id="page-stats" class="block-body collapse in">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>预约人</th>
+                                        <th>预约会议室</th>
+                                        <th>开始时间</th>
+                                        <th>结束时间</th>
+                                        <th>参与人列表</th>
+                                        <th>状态</th>
+                                        <th width="180px">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {volist name="list" id="vo"}
+                                    <tr>
+                                        <td>{$vo.id}</td>
+                                        <td>{$vo.uid|format_user_name}</td>
+                                        <td>{$vo.room_id|format_room_name}</td>
+                                        <td>{$vo.start_time|format_time}</td>
+                                        <td>{$vo.end_time|format_time}</td>
+                                        <!-- <td>{$vo.join_uid}</td> -->
+                                        <td><input data-join-uid="{$vo.join_uid|format_join_uid_user_name}" class="btn btn-small join-uid" type="button" value="点我查看"></td>
+                                        <td>{$vo.status|format_reservation_status}</td>
+                                        <td>
+                                            {if condition="$vo['uid'] eq $user_info['id'] && $vo['status'] eq 1"}
+                                            | 
+                                            <a class="cancel" href="javascript:;" data-href="/reservation/cancel?id={$vo.id}" title="取消">取消</a>
+                                            | 
+                                            <a class="cancel" href="javascript:;" data-href="/reservation/completed?id={$vo.id}" title="结束">结束</a>
+                                            {/if}
+                                        </td>
+                                    </tr>
+                                    {/volist}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <script>
+                        $('.cancel').click(function(){
+                            var href=$(this).data('href');
+                            bootbox.confirm('确定要这样做吗？', function(result) {
+                                if(result){
+                                    location.replace(href);
+                                }
+                            });
+                        });
+
+                        $(".join-uid").click(function(){
+                            bootbox.alert($(this).data('join-uid'));
+                        });
+                    </script>
+{include file="Public/footer"}

@@ -1,0 +1,103 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">添加预约</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li><a href="/reservation"> 预约列表 </a> <span class="divider">/</span></li>
+                <li class="active">添加预约</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="bb-alert alert alert-info" style="display: none;">
+                        <span>操作提示</span>
+                    </div>
+                    <div class="well">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">请填写预约资料</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <script src="/assets/js/My97DatePicker/WdatePicker.js"></script>
+                                <form id="tab" method="post" action="" data-href="/reservation/add" data-redirect="/reservation">
+                                    <label>会议室</label>
+                                    <select name="room_id" class="input-xlarge">
+                                        {volist name=":get_all_room()" id="vo"}
+                                        <option value="{$vo.id}" class="input-xlarge option">{$vo.room_name}</option>
+                                        {/volist}
+                                    </select>
+                                    <label>开始时间</label>
+                                    <input type="datetime" onClick="WdatePicker({lang: 'zh-cn', el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" name="start_time" value="" required="true" class="input-xlarge" />
+                                    <label>结束时间</label>
+                                    <input type="datetime" onClick="WdatePicker({lang: 'zh-cn', el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" name="end_time" value="" required="true" class="input-xlarge" />
+                                    <label>参会人列表(请搜索后选择下拉列表)</label>
+                                    <input type="text" id="search_username" class="input-small" />
+                                    <span style="margin-bottom: 10px" id="search_user_btn" class="btn btn-small"> 搜 索 </span>
+                                    <select id="search_user_select">
+                                        <option value="">请选择</option>
+                                    </select>
+                                    <span style="margin-bottom: 10px" id="add_into_join_user_btn" class="btn btn-small">添加该用户</span>
+                                    <br/>
+                                    <style>
+                                        #join_user_list_div .btn{
+                                            margin-right: 3px;
+                                        }
+                                    </style>
+                                    <div id="join_user_list_div">
+                                    </div>
+                                    <input type="hidden" name="join_uid" value="" />
+                                    <div class="btn-toolbar">
+                                        <button type="button" id="sub_btn" class="btn btn-primary"><strong>提交</strong></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(function(){
+                            $("#search_user_btn").click(function(){
+                                var search_text = $("#search_username").val().trim();
+                                if (search_text != '') {
+                                    $.post("/api/search_user", {"name": search_text}, function(res){
+                                        if (res.error_msg != '') {
+                                            alert(res.error_msg);
+                                        } else {
+                                            $("#search_user_select").html(create_select_option(res.data));
+                                        }
+                                    }, 'json');
+                                }
+                            });
+                            $("#add_into_join_user_btn").click(function(){
+                                var add_user = $("#search_user_select").val();
+                                if (add_user != '') {
+                                    var add_user_name = $("#search_user_select").find("option:selected").text();
+                                    $("#join_user_list_div").append("<span title='点我移除' data-uid=" + add_user + " class='btn btn-small join_user'>" + add_user_name + "</span>");
+                                    reset_join_user();
+                                }
+                            });
+                            $("body").on('click', '.join_user', function(){
+                                $(this).remove();
+                                reset_join_user();
+                            });
+                        });
+                        function create_select_option(data)
+                        {
+                            var str = '<option value="">请选择</option>';
+                            for( var i in data) {
+                                let item = data[i];
+                                str += '<option value="' + item['id'] + '">' + item['username'] + '</option>'
+                            }
+                            return str;
+                        }
+                        function reset_join_user()
+                        {
+                            var uids = [];
+                            $(".join_user").each(function(index, ele){
+                                uids.push($(ele).data('uid'));
+                            });
+                            $("input[name='join_uid']").val(uids.join(','));
+                        }
+                    </script>
+{include file="Public/footer"}

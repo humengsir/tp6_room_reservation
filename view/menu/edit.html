@@ -1,0 +1,71 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">编辑菜单</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li><a href="/menu"> 菜单列表 </a> <span class="divider">/</span></li>
+                <li class="active">编辑菜单</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="bb-alert alert alert-info" style="display: none;">
+                        <span>操作提示</span>
+                    </div>
+                    <div class="well">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">请填写菜单资料</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <form id="tab" method="post" action="">
+                                    <label>菜单名称</label>
+                                    <input type="text" name="menu_name" value="{$info.menu_name}" class="input-xlarge" required="true" autofocus="true" />
+                                    <label>关联权限</label>
+                                    <select name="node_id" class="input-xlarge">
+                                        <option value="0" class="input-xlarge option">请选择</option>
+                                        {volist name="node_list" id="vo"}
+                                        <option {if condition="$vo.id eq $info.node_id"}selected="selected"{/if} value="{$vo.id}" class="input-xlarge option">{$vo.node_name}</option>
+                                        {/volist}
+                                    </select>
+                                    <label>模块排序数字(数字越大越靠前)</label>
+                                    <input type="text" name="menu_sort" value="{$info.menu_sort}" class="input-xlarge" />
+                                    <label>是否是左侧导航</label>
+                                    <select name="is_nav" class="input-xlarge">
+                                        <option value="1" {if condition="$info.is_nav eq 1"}selected="selected"{/if} class="input-xlarge option">是</option>
+                                        <option value="0" {if condition="$info.is_nav eq 0"}selected="selected"{/if} class="input-xlarge option">否</option>
+                                    </select>
+                                    <label>上级菜单</label>
+                                    <select name="pid" class="input-xlarge">
+                                        <option value="0" class="input-xlarge option">顶级菜单</option>
+                                        {volist name="menu_list" id="vo"}
+                                            <option value="{$key}" {if condition="$key eq $info.pid"}selected="selected"{/if} class="input-xlarge option">{$key|format_menu_pid_name}</option>
+                                            {volist name="vo" id="item"}
+                                            <option value="{$item.id}" {if condition="$item.id eq $info.pid"}selected="selected"{/if} class="input-xlarge option">---{$item.menu_name}</option>
+                                            {/volist}
+                                        {/volist}
+                                    </select>
+                                    <div class="btn-toolbar">
+                                        <button type="button" id="sub_btn" class="btn btn-primary"><strong>提交</strong></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(function(){
+                            $("#sub_btn").click(function(){
+                                var data = $('form').serializeArray();
+                                $.post("/menu/add", data, function(res){
+                                    if (res.error_msg != '') {
+                                        alert(res.error_msg);
+                                    }else{
+                                        window.location.href = '/menu';
+                                    }
+                                }, 'json');
+                            });
+                        });
+                    </script>
+{include file="Public/footer"}

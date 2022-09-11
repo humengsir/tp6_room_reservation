@@ -1,0 +1,63 @@
+{include file="Public/header"}
+        <!-- 以上为左侧菜单栏 sidebar -->
+        <div id="content" class="content">
+            <div class="header">
+                <h1 class="page-title">编辑用户</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li><a href="/"> 控制面板 </a> <span class="divider">/</span></li>
+                <li><a href="/user"> 用户列表 </a> <span class="divider">/</span></li>
+                <li class="active">编辑用户</li>
+            </ul>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="bb-alert alert alert-info" style="display: none;">
+                        <span>操作提示</span>
+                    </div>
+                    <div class="well">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">请编辑用户资料</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <form id="tab" method="post" action="" autocomplete="off">
+                                    <label>登录名</label>
+                                    <input type="hidden" name="id" value="{$info.id}">
+                                    <input type="text" name="username" value="{$info.username}" class="input-xlarge" />
+                                    <label>密码</label>
+                                    <input type="password" name="password" value="" class="input-xlarge" required="true" />
+                                    <label>邮箱</label>
+                                    <input type="email" name="email" value="{$info.email}" class="input-xlarge" required="true" />
+                                    <label>用户组</label>
+                                    <select name="group_id[]" multiple="multiple" class="input-xlarge">
+                                        {volist name="group" id="vo"}
+                                        <option value="{$key}" {if condition="in_array($key, $info.group_id)"}selected="selected"{/if} class="input-xlarge option">{$vo}</option>
+                                        {/volist}
+                                    </select>
+                                    <label>状态</label>
+                                    <select name="status" class="input-xlarge">
+                                        <option value="1" {if condition="$info.status eq 1"}selected="selected"{/if} class="input-xlarge option">启用</option>
+                                        <option value="0" {if condition="$info.status eq 0"}selected="selected"{/if} class="input-xlarge option">禁用</option>
+                                    </select>
+                                    <div class="btn-toolbar">
+                                        <button type="button" id="sub_btn" class="btn btn-primary"><strong>提交</strong></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(function(){
+                            $("#sub_btn").click(function(){
+                                var data = $('form').serializeArray();
+                                $.post("/user/edit", data, function(res){
+                                    if (res.error_msg != '') {
+                                        alert(res.error_msg);
+                                    }else{
+                                        window.location.href = '/user';
+                                    }
+                                }, "json");
+                            });
+                        });
+                    </script>
+{include file="Public/footer"}

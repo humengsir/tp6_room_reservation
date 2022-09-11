@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>{$title}</title>
+        <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <link rel="stylesheet" href="/assets/lib/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="/assets/stylesheets_wintertide/theme.css" />
+        <link rel="stylesheet" href="/assets/lib/font-awesome/css/font-awesome.css" />
+        <link rel="stylesheet" href="/assets/css/other.css" />
+        <link rel="stylesheet" href="/assets/css/jquery-ui.css" />
+        <script src="/assets/lib/jquery-1.8.1.min.js"></script>
+        <script src="/assets/lib/jquery.cookie.js"></script>
+        <script src="/assets/lib/bootstrap/js/bootbox.min.js"></script>
+        <script src="/assets/lib/bootstrap/js/bootstrap-modal.js"></script>
+        <script src="/assets/js/other.js"></script>
+        <script src="/assets/js/jquery-ui.js"></script>
+        <!-- Demo page code -->
+        <style type="text/css">
+            #line-chart {
+                height:300px;
+                width:800px;
+                margin: 0px auto;
+                margin-top: 1em;
+            }
+            .brand { font-family: georgia, serif; }
+            .brand .first {
+                color: #ccc;
+                font-style: italic;
+            }
+            .brand .second {
+                color: #fff;
+                font-weight: bold;
+            }
+        </style>
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+            <script src="assets/js/html5.js"></script>
+        <![endif]-->
+    </head>
+    <body id="body" class="body">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <ul class="nav pull-right">
+                    <li id="fat-menu" class="dropdown">
+                        <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-user"></i> {$user_info.username} <i class="icon-caret-down"></i> </a>
+                        <ul class="dropdown-menu">
+                            <li><a tabindex="-1" href="/login/logout">注销</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <a class="brand" href="/"><span class="first"></span> <span class="second">管理中心</span> </a>
+            </div>
+        </div>
+        <div id="sidebar-nav" class="sidebar-nav">
+            {volist name="sidebar_list" id="vo"}
+            <a href="#sidebar_menu_{$key}" class="nav-header collapsed" data-toggle="collapse"><i class="icon-th"></i>{$key|format_menu_pid_name} <i class="icon-chevron-up"></i></a>
+            <ul id="sidebar_menu_{$key}" class="nav nav-list collapse in">
+                {volist name="vo" id="item"}
+                {if condition="$item.is_nav eq 1"}
+                <li><a href="{$item.node_id|format_node_url}">{$item.menu_name}</a></li>
+                {/if}
+                {/volist}
+            </ul>
+            {/volist}
+        </div>
