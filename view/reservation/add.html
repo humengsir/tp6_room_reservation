@@ -70,8 +70,16 @@
                                 }
                             });
                             $("#add_into_join_user_btn").click(function(){
-                                var add_user = $("#search_user_select").val();
+                                var add_user = "" + $("#search_user_select").val();
+                                var now_uids = $("input[name='join_uid']").val();
                                 if (add_user != '') {
+                                    if (now_uids != '') {
+                                        now_uids = now_uids.split(',');
+                                        console.log(now_uids);
+                                        if (now_uids.indexOf(add_user) > -1) {
+                                            return false;
+                                        }
+                                    }
                                     var add_user_name = $("#search_user_select").find("option:selected").text();
                                     $("#join_user_list_div").append("<span title='点我移除' data-uid=" + add_user + " class='btn btn-small join_user'>" + add_user_name + "</span>");
                                     reset_join_user();

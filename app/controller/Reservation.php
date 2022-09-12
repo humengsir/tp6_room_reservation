@@ -46,7 +46,7 @@ class Reservation extends BaseController
             if (!$room_info) {
                 return json(['error_msg' => '该会议室不可用']);
             }
-            $is_active = $room_model->check_room_is_active($room_info, $start_time, $end_time);
+            $is_active = $room_model->check_room_is_active($this->model, $room_info, $start_time, $end_time);
             if (!$is_active) {
                 return json(['error_msg' => '该会议室在您预约的这段时间不可用']);
             }
